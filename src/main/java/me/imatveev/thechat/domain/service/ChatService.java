@@ -13,5 +13,9 @@ public interface ChatService {
 
     List<Chat> findByUserId(UUID userId);
 
+    Chat startDirectChat(UUID user1Id, UUID user2Id);
+
+    Chat startGroupChat(UUID userId, List<UUID> receivers, String chatName);
+
     void joinToChat(UUID userId, UUID chatId);
 }

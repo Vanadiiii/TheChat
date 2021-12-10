@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,6 +45,46 @@ public class ChatServiceImpl implements ChatService {
         log.info("try to find chats by user's id - {}", userId);
 
         return storage.findByUserId(userId);
+    }
+
+    @Override
+    @Transactional
+    public Chat startDirectChat(UUID user1Id, UUID user2Id) {
+        log.info("try to start direct chat for users - {} and {}", user1Id, user2Id);
+
+        User user1 = userService.findById(user1Id)
+                .orElseThrow(() -> UserNotFoundException.of(user1Id));
+        User user2 = userService.findById(user2Id)
+                .orElseThrow(() -> UserNotFoundException.of(user2Id));
+
+        Chat directChat = Chat.builder()
+                .type(ChatType.DIRECT)
+                .users(List.of(user1, user2))
+                .build();
+
+        return storage.save(directChat);
+    }
+
+    @Override
+    public Chat startGroupChat(UUID userId, List<UUID> receivers, String chatName) {
+        log.info("try to start direct chat for users - {} and {}", userId, receivers);
+
+        User user = userService.findById(userId)
+                .orElseThrow(() -> UserNotFoundException.of(userId));
+        List<User> users = receivers.stream()
+                .map(userService::findById)
+                .map(Optional::orElseThrow)
+                .collect(Collectors.toList());
+
+        users.add(user);
+
+        Chat groupChat = Chat.builder()
+                .name(chatName)
+                .type(ChatType.GROUP)
+                .users(users)
+                .build();
+
+        return storage.save(groupChat);
     }
 
     @Override
