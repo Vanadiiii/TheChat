@@ -3,9 +3,13 @@ package me.imatveev.thechat.web;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.imatveev.thechat.domain.entity.Chat;
+import me.imatveev.thechat.domain.entity.User;
 import me.imatveev.thechat.domain.service.ChatService;
 import me.imatveev.thechat.exception.ChatNotFoundException;
-import me.imatveev.thechat.web.mapper.ChatMapper;
+import me.imatveev.thechat.web.model.StartDirectChatDto;
+import me.imatveev.thechat.web.model.StartGroupChatDto;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,10 +18,10 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyAuthority('ADMIN', 'REGISTERED')")
 @RequestMapping("/the-chat/v1/chats")
 public class ChatController {
     private final ChatService service;
-    private final ChatMapper mapper;
 
     @GetMapping("/{id}")
     public Chat findById(@PathVariable UUID id) {
@@ -25,25 +29,32 @@ public class ChatController {
                 .orElseThrow(() -> ChatNotFoundException.of(id));
     }
 
-    @GetMapping("/users/{userId}")
-    public List<Chat> findByUserId(@PathVariable UUID userId) {
-        return service.findByUserId(userId);
+    @GetMapping
+    public List<Chat> findAllUsersChats(@AuthenticationPrincipal User principal) {
+        return service.findByUserId(principal.getId());
     }
 
-    @PutMapping("/start-direct-chat")
-    public Chat startDirectChat(@RequestParam UUID user1Id, @RequestParam UUID user2Id) {
-        return service.startDirectChat(user1Id, user2Id);
+    @PostMapping("/direct-chat")
+    public Chat startDirectChat(@AuthenticationPrincipal User principal,
+                                @RequestBody StartDirectChatDto chatDto) {
+        return service.startDirectChat(
+                principal.getId(),
+                chatDto.getCompanionId()
+        );
     }
 
-    @PutMapping("/start-group-chat")
-    public Chat startDirectChat(@RequestParam UUID userId,
-                                @RequestParam List<UUID> userIds,
-                                @RequestParam String chatName) {
-        return service.startGroupChat(userId, userIds, chatName);
+    @PostMapping("/group-chat")
+    public Chat startDirectChat(@AuthenticationPrincipal User principal,
+                                @RequestBody StartGroupChatDto chatDto) {
+        return service.startGroupChat(
+                principal.getId(),
+                chatDto.getCompanionIds(),
+                chatDto.getChatName()
+        );
     }
 
     @PutMapping("/join")
-    public void joinToChat(@RequestParam UUID userId, @RequestParam UUID chatId) {
-        service.joinToChat(userId, chatId);
+    public void joinToChat(@AuthenticationPrincipal User principal, @RequestParam UUID chatId) {
+        service.joinToChat(principal.getId(), chatId);
     }
 }

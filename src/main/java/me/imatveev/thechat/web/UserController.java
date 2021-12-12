@@ -1,6 +1,5 @@
 package me.imatveev.thechat.web;
 
-import io.swagger.v3.oas.annotations.links.Link;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +10,7 @@ import me.imatveev.thechat.web.mapper.UserMapper;
 import me.imatveev.thechat.web.model.UserDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    @ApiResponse(description = "register new user", links = @Link(name = "register new user"))
+    @ApiResponse(description = "register new user")
     public User register(@RequestBody UserDto user) {
         return Optional.of(user)
                 .map(mapper)

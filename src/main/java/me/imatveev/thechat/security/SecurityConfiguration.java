@@ -2,7 +2,9 @@ package me.imatveev.thechat.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import me.imatveev.thechat.domain.service.UserService;
 import me.imatveev.thechat.security.filter.BasicAuthFilter;
+import me.imatveev.thechat.security.filter.TokenAuthFilter;
 import me.imatveev.thechat.security.properties.SecurityProperties;
 import me.imatveev.thechat.security.service.UserSecurityService;
 import org.springframework.context.annotation.Bean;
@@ -23,12 +25,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder encoder;
     private final SecurityProperties properties;
-    private final UserSecurityService userService;
+    private final UserSecurityService userSecurityService;
+    private final UserService userService;
     private final ObjectMapper mapper;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService)
+        auth.userDetailsService(userSecurityService)
                 .passwordEncoder(encoder);
     }
 
@@ -37,6 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         BasicAuthFilter basicAuthFilter = new BasicAuthFilter(
                 authenticationManager(), properties, mapper
         );
+        TokenAuthFilter tokenAuthFilter = new TokenAuthFilter(properties, userService);
 
         http.csrf().disable();
         http.cors().disable();
@@ -50,12 +54,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.formLogin(
                 form -> form.loginPage("/login")
                         .permitAll()
-                        .defaultSuccessUrl("/swagger-ui.html")
                         .successForwardUrl("/swagger-ui.html")
-                        .permitAll()
         );
 
         http.addFilter(basicAuthFilter);
+        http.addFilterBefore(tokenAuthFilter, BasicAuthFilter.class);
     }
 
     @Bean
