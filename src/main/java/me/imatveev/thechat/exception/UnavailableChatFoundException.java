@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class UnavailableChatFoundException extends RuntimeException {
-    public UnavailableChatFoundException(String message) {
+    private UnavailableChatFoundException(String message) {
         super(message);
     }
 

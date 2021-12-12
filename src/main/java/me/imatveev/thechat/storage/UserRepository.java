@@ -24,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, UUID>, UserStorage {
     Optional<User> findByPhone(String phone);
 
     @Query("select user from User user" +
-            " left join fetch Chat chat" +
+            " left join fetch user.chats chat" +
             " where chat.id = :chat_id")
     List<User> findAllByChatId(@Param("chat_id") UUID chatId);
 }

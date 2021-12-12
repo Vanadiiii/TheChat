@@ -1,5 +1,6 @@
 package me.imatveev.thechat.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
@@ -39,6 +40,7 @@ public class Chat {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     @ToString.Exclude
+    @JsonIgnore
     private List<User> users;
 
     @OneToMany
@@ -48,6 +50,7 @@ public class Chat {
             inverseJoinColumns = @JoinColumn(name = "message_id")
     )
     @ToString.Exclude
+    @JsonIgnore
     private List<Message> messages;
 
     public void addMessage(Message message) {

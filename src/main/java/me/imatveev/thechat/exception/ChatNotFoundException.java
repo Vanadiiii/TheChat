@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class ChatNotFoundException extends RuntimeException {
-    public ChatNotFoundException(String message) {
+    private ChatNotFoundException(String message) {
         super(message);
     }
 

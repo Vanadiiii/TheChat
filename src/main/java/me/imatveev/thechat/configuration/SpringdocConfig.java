@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,8 +17,7 @@ import org.springframework.context.annotation.Configuration;
                         url = "https://t.me/vanadiiii42",
                         email = "vanadiiii42@gmail.com"
                 )
-        ),
-        security = @SecurityRequirement(name = "bearerToken")
+        )
 )
 @SecurityScheme(
         type = SecuritySchemeType.HTTP,
@@ -27,5 +25,5 @@ import org.springframework.context.annotation.Configuration;
         bearerFormat = "JWT",
         scheme = "bearer"
 )
-public class OpenApiConfig {
+public class SpringdocConfig {
 }

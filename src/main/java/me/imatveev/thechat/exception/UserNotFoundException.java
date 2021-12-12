@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(String message) {
+    private UserNotFoundException(String message) {
         super(message);
     }
 

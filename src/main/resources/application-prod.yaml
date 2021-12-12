@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/the_chat
+    username: admin
+    password: 5834
+    driver-class-name: org.postgresql.Driver
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+security:
+  secret-key: secret
+  expired-at-minutes: 5
+  allowed-endpoints: [ /swagger-ui.html, /swagger-ui/**, /v3/api-docs/**, /h2, /h2/** ]
+
+export:
+  messages:
+    batch-size: 40
