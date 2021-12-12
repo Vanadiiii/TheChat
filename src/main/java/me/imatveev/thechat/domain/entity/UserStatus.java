@@ -1,7 +1,15 @@
 package me.imatveev.thechat.domain.entity;
 
-public enum UserStatus {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum UserStatus implements GrantedAuthority {
     NEW,
     REGISTERED,
-    DELETED
+    DELETED,
+    ADMIN;
+
+    @Override
+    public String getAuthority() {
+        return this.name();
+    }
 }

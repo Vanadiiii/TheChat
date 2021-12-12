@@ -12,4 +12,6 @@ public class UserDto {
     String name;
     @NonNull
     String phone;
+    @NonNull
+    String password;
 }

@@ -20,6 +20,9 @@ public interface UserRepository extends JpaRepository<User, UUID>, UserStorage {
     @Override
     Optional<User> findById(UUID id);
 
+    @Override
+    Optional<User> findByPhone(String phone);
+
     @Query("select user from User user" +
             " left join fetch Chat chat" +
             " where chat.id = :chat_id")

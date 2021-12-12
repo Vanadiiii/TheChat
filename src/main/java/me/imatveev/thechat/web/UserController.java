@@ -1,5 +1,6 @@
 package me.imatveev.thechat.web;
 
+import io.swagger.v3.oas.annotations.links.Link;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,13 +10,8 @@ import me.imatveev.thechat.exception.UserNotFoundException;
 import me.imatveev.thechat.web.mapper.UserMapper;
 import me.imatveev.thechat.web.model.UserDto;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,14 +21,16 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/the-chat/v1/users")
+@PreAuthorize("hasAnyAuthority('REGISTERED', 'ADMIN')")
 public class UserController {
     private final UserMapper mapper;
     private final UserService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiResponse(description = "save new user")
-    public User saveNew(@RequestBody UserDto user) {
+    @PreAuthorize("permitAll()")
+    @ApiResponse(description = "register new user", links = @Link(name = "register new user"))
+    public User register(@RequestBody UserDto user) {
         return Optional.of(user)
                 .map(mapper)
                 .map(service::save)

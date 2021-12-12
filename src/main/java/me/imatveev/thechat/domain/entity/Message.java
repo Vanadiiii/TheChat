@@ -45,7 +45,7 @@ public class Message {
     @CreatedDate
     private LocalDateTime time;
 
-    @OneToOne
+    @OneToOne(optional = false)
     private User user;
 
     @Override

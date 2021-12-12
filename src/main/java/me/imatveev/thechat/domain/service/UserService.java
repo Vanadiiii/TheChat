@@ -11,6 +11,8 @@ public interface UserService {
 
     Optional<User> findById(UUID id);
 
+    Optional<User> findByPhone(String phone);
+
     List<User> findAll();
 
     List<User> findByChatId(UUID chatId);

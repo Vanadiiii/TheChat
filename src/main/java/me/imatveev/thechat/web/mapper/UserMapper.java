@@ -17,6 +17,7 @@ public interface UserMapper extends Function<UserDto, User> {
     @Mapping(target = "status", constant = "NEW")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "chats", ignore = true)
+    @Mapping(target = "enabled", constant = "true")
     @Override
     User apply(UserDto userDto);
 }

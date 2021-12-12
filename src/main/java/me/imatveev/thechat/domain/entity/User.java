@@ -1,27 +1,15 @@
 package me.imatveev.thechat.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import javax.persistence.*;
+import java.util.*;
 
 @Getter
 @Setter
@@ -31,7 +19,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -43,6 +31,14 @@ public class User {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    @JsonIgnore
+    private String password;
+
+    @Builder.Default
+    @JsonIgnore
+    private boolean enabled = true;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -68,5 +64,35 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    @JsonIgnore
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(status);
+    }
+
+    @Override
+    @JsonIgnore
+    public String getUsername() {
+        return phone;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return false;
     }
 }
